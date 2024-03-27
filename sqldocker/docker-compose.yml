@@ -1,0 +1,47 @@
+version:  "3"
+
+services:
+  #EDGE SQL WORKS TOO
+  mssql:
+    image: mcr.microsoft.com/azure-sql-edge:latest
+    cap_add: [ 'SYS_PTRACE' ]
+    env_file:
+      - ~/sandbox.docker.env    
+    environment:
+      - "ACCEPT_EULA=1"
+      - "MSSQL_SA_PASSWORD=Password1!"
+    ports:
+      - "1433:1433"
+    hostname: mssql
+    volumes:
+      - "mssql-azuresql-edge-data:/var/opt/mssql"
+    networks:
+      - "ddog"
+
+  # mssql:
+  #   environment:
+  #       - ACCEPT_EULA=Y
+  #       - MSSQL_SA_PASSWORD=Password1!
+  #   ports:
+  #       - '1433:1433'
+  #   container_name: mssql
+  #   hostname: mssql
+  #   image: mcr.microsoft.com/mssql/server:2022-latest
+  #   networks: 
+  #     - "ddog"  
+
+  datadog-agent:
+    build: ddconfig/.
+    environment:
+        - 'DD_HOSTNAME=SQLDockerMac'
+    volumes:
+        - '/var/run/docker.sock:/var/run/docker.sock:ro'
+    networks:
+      - "ddog"
+
+volumes:
+    mssql-azuresql-edge-data:
+
+networks:
+  ddog:
+    driver: bridge

@@ -1,0 +1,22 @@
+init_config:
+
+instances:
+  - dbm: true
+    host: 'mssql,1433'
+    username: sa
+    password: 'Password1!'
+    connector: 'odbc'
+    driver: 'FreeTDS'
+    custom_queries:
+      - query: SELECT optname, [value], major_version, minor_version FROM MSreplication_options;
+        columns:
+          - name: optname
+            type: tag
+          - name: value
+            type: gauge
+          - name: major_version
+            type: gauge
+          - name: minor_version
+            type: gauge
+        tags:
+          - 'query:customSQL'

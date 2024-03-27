@@ -1,4 +1,6 @@
 init_config:
+  is_jmx: true
+  collect_default_metrics: true
 
 instances:
     - host: kafka

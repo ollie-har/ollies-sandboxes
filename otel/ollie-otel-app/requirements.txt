@@ -1,2 +1,3 @@
-flask
-redis
+opentelemetry
+opentelemetry.sdk.metrics
+opentelemetry.sdk.metrics.export

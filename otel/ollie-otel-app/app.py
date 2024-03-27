@@ -1,27 +1,27 @@
-# from opentelemetry import metrics
+from opentelemetry import metrics
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.sdk.metrics.export import (
+    ConsoleMetricExporter,
+    PeriodicExportingMetricReader,
+)
 
-import time
-import redis
-from flask import Flask
+metric_reader = PeriodicExportingMetricReader(ConsoleMetricExporter())
+provider = MeterProvider(metric_readers=[metric_reader])
 
-app = Flask(__name__)
-cache = redis.Redis(host='redis', port=6379)
+# Sets the global default meter provider
+metrics.set_meter_provider(provider)
 
-def get_hit_count():
-    retries = 5
-    while True:
-        try:
-            return cache.incr('hits')
-        except redis.exceptions.ConnectionError as exc:
-            if retries == 0:
-                raise exc
-            retries -= 1
-            time.sleep(0.5)
+# Creates a meter from the global meter provider
+meter = metrics.get_meter("my.meter.name")
 
-@app.route('/')
-def hello():
-    count = get_hit_count()
-    return 'Hello World! I have been seen {} times.\n'.format(count)
+work_counter = meter.create_counter(
+    "work.counter", unit="1", description="Counts the amount of work done"
+)
+
+def do_work(work_item):
+    # count the work being doing
+    work_counter.add(1, {"work.type": work_item.work_type})
+    print("doing some work...")
 
 
 # meter = metrics.get_meter("app_or_package_name")

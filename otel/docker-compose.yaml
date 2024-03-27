@@ -1,21 +1,18 @@
 version: '3'
 services:
-  # datadog-agent:
-  #   container_name: datadog-agent
-  #   image: datadog/agent:latest
-  #   env_file:
-  #     - ~/sandbox.docker.env
-  #   volumes:
-  #     - /var/run/docker.sock:/var/run/docker.sock:ro
-  #     - /proc/:/host/proc/:ro
-  #     - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
-  #   environment:
-  #     - DD_APM_ENABLED=true
-  #     - DD_APM_NON_LOCAL_TRAFFIC=true
-  #     - DD_LOG_LEVEL=TRACE
-  #     - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
-  #     - DD_AC_EXCLUDE=name:datadog-agent
-  #     - DD_OTLP_HTTP_PORT=4318
+  datadog-agent:
+    container_name: datadog-agent
+    image: datadog/agent:latest
+    env_file:
+      - ~/sandbox.docker.env
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /proc/:/host/proc/:ro
+      - /sys/fs/cgroup/:/host/sys/fs/cgroup:ro
+    environment:
+      - DD_LOG_LEVEL=TRACE
+      - DD_DOGSTATSD_NON_LOCAL_TRAFFIC=true
+      - DD_OTLP_HTTP_PORT=4318
   web:
     container_name: ollie-otel
     build: ./ollie-otel-app
@@ -23,12 +20,10 @@ services:
       - ./ollie-otel-app:/home/app
     ports:
       - "4567:4567"
-    # environment:
-    #   - OTEL_EXPORTER_OTLP_ENDPOINT=http://datadog-agent:4318
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://datadog-agent:4318
     # depends_on:
     #   - datadog-agent
 
-  redis:
-    image: "redis:alpine"
 
 # https://docs.docker.com/compose/gettingstarted/
