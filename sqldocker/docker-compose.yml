@@ -4,9 +4,7 @@ services:
   #EDGE SQL WORKS TOO
   mssql:
     image: mcr.microsoft.com/azure-sql-edge:latest
-    cap_add: [ 'SYS_PTRACE' ]
-    env_file:
-      - ~/sandbox.docker.env    
+    cap_add: [ 'SYS_PTRACE' ]    
     environment:
       - "ACCEPT_EULA=1"
       - "MSSQL_SA_PASSWORD=Password1!"
@@ -32,6 +30,8 @@ services:
 
   datadog-agent:
     build: ddconfig/.
+    env_file:
+      - ~/sandbox.docker.env    
     environment:
         - 'DD_HOSTNAME=SQLDockerMac'
     volumes:
